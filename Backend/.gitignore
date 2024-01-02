@@ -1,0 +1,11 @@
+# .gitignore
+env/
+
+# Ignore the .env file
+.env
+
+# Ignore any generated or local settings files
+*.pyc
+*.pyo
+__pycache__/
+local_settings.py

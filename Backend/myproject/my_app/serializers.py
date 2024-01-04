@@ -1,6 +1,38 @@
-# serializers.py
 from rest_framework import serializers
-from .models import Game, Image, Order, OrderItem,Review,CartItem,Cart
+from .models import Game, Image, Order, OrderItem,Review,CartItem,Cart, CartItem, Order, OrderItem
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth.models import User
+
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['username'] = user.username
+        return token
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def validate_email(self, value):
+        # Check if the email already exists in the User model
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email already exists. Choose a different email.")
+        return value
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
+
+class UserviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+
 
 class ImageSerializer(serializers.ModelSerializer):
     
@@ -120,8 +152,7 @@ class UpdateCartItemSerializer(serializers.ModelSerializer):
         model=CartItem
         fields = ['quantity']
 
-# serializers.py
-# serializers.py
+
 class OrderItemSerializer(serializers.ModelSerializer):
     game = SimpleProductSerializer()
     total_price = serializers.SerializerMethodField()
@@ -135,7 +166,6 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
  
 
-# serializers.py
 class OrderSerializer(serializers.ModelSerializer):
     order_items = OrderItemSerializer(many=True, read_only=True)
 
@@ -148,10 +178,8 @@ class UpdateOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model=Order
         fields = ['payment_status']
-# serializers.py
-from rest_framework import serializers
-from .models import Cart, CartItem, Order, OrderItem
-from .serializers import SimpleProductSerializer, OrderItemSerializer
+
+
 
 class CreateOrderSerializer(serializers.Serializer):
     cart_id = serializers.UUIDField()
@@ -192,3 +220,5 @@ class CreateOrderSerializer(serializers.Serializer):
         Cart.objects.filter(pk=cart_id).delete()
 
         return order
+
+

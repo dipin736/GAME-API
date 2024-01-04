@@ -2,60 +2,69 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Game, Order,Review,Image,CartItem
-from .serializers import CreateOrderSerializer, GameSerializer, OrderSerializer,ReviewSerializer,ImageSerializer,CartItemSerializer,CartSerializer,Cart,AddCartItemSerializer,UpdateCartItemSerializer, UpdateOrderSerializer
-from rest_framework.views import APIView
-from rest_framework.viewsets import GenericViewSet
+from .serializers import ( MyTokenObtainPairSerializer, UserSerializer,CreateOrderSerializer, GameSerializer, OrderSerializer,ReviewSerializer,ImageSerializer,
+                          CartItemSerializer,CartSerializer,Cart,AddCartItemSerializer,UpdateCartItemSerializer,
+                            UpdateOrderSerializer, UserviewSerializer)
 from rest_framework import viewsets
-from rest_framework.mixins import CreateModelMixin
-from rest_framework.decorators import action
+from rest_framework import generics, permissions
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.contrib.auth.models import User
+from rest_framework.response import Response
 
 @api_view()
 def home(request):
     return Response('ok')
 
-# class GameListAPIView(APIView):
-#     def get(self, request):
-#         games = Game.objects.all()
-#         serializer = GameSerializer(games, many=True)
-#         return Response(serializer.data)
-
-#     def post(self, request):
-#         serializer = GameSerializer(data=request.data)
-
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# class GameDetailAPIView(APIView):
-#     def get(self, request, game_id):
-#         game = get_object_or_404(Game, pk=game_id)
-#         serializer = GameSerializer(game)
-#         return Response(serializer.data)
+# ...user jwt....
 
 
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (permissions.AllowAny,)
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        # Customize the response data
+        if response.status_code == 200:
+            response.data['message'] = 'Login successful.'
+        return response
+
+class LogoutView(generics.GenericAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        # Simply return success message, as JWTs are stateless
+        return Response({"detail": "Successfully logged out."})
+
+# views.py
+from rest_framework import generics, permissions
+from .serializers import UserSerializer
+
+class UserProfileView(generics.RetrieveAPIView):
+    serializer_class = UserviewSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
 
 class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
+    permission_classes = [permissions.IsAuthenticated] 
     
 
 class GameReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    
-# class GameReviewViewSet(viewsets.ModelViewSet):
-#     serializer_class = ReviewSerializer
-
-#     def get_serializer_context(self):
-#         return {'game_id': self.kwargs['game_pk']}
-    
-#     def get_queryset(self):
-#         return Review.objects.filter(game_id=self.kwargs['game_pk'])
+    permission_classes = [permissions.IsAuthenticated] 
 
 class GameImageViewSet(viewsets.ModelViewSet):
     serializer_class = ImageSerializer
+    permission_classes = [permissions.IsAuthenticated] 
+
 
     def get_queryset(self):
         """
@@ -69,6 +78,8 @@ class GameImageViewSet(viewsets.ModelViewSet):
 class CartViewSet(viewsets.ModelViewSet):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
+    permission_classes = [permissions.IsAuthenticated] 
+
 
 class CartItemViewSet(viewsets.ModelViewSet):
     http_method_names=['get','post','patch','delete']
@@ -84,6 +95,7 @@ class CartItemViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return CartItem.objects.filter(cart__id=self.kwargs['cart_pk'])
+    permission_classes = [permissions.IsAuthenticated]
 
 
 # views.py
@@ -102,5 +114,6 @@ class OrderViewSet(viewsets.ModelViewSet):
         elif self.request.method =='PATCH':
             return UpdateOrderSerializer
         return OrderSerializer
+    permission_classes = [permissions.IsAuthenticated] 
+    
 
-# ...user jwt....

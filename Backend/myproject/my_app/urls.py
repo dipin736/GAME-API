@@ -11,12 +11,13 @@
 #     # Add more paths as needed
 # ]
 
+# game_router = NestedDefaultRouter(router, 'games', lookup='games')
+# game_router.register('reviews', GameReviewViewSet, basename='games-reviews')
 
-
-# urls.py
 from django.urls import path
-from .views import home, GameViewSet, GameReviewViewSet, GameImageViewSet, CartViewSet, CartItemViewSet,OrderViewSet
+from .views import LogoutView, MyTokenObtainPairView, RegisterView, UserProfileView, home, GameViewSet, GameReviewViewSet, GameImageViewSet, CartViewSet, CartItemViewSet, OrderViewSet
 from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
+from rest_framework_simplejwt.views import TokenRefreshView
 
 router = DefaultRouter()
 router.register(r'games', GameViewSet, basename='game-list')
@@ -25,11 +26,13 @@ router.register(r'image', GameImageViewSet, basename='image-list')
 router.register(r'carts', CartViewSet, basename='carts')
 router.register(r'orders', OrderViewSet, basename='orders')
 
-
-# game_router = NestedDefaultRouter(router, 'games', lookup='games')
-# game_router.register('reviews', GameReviewViewSet, basename='games-reviews')
-
 carts_router = NestedDefaultRouter(router, 'carts', lookup='cart')
 carts_router.register('items', CartItemViewSet, basename='cart-items-details')
 
-urlpatterns = router.urls + carts_router.urls
+urlpatterns = [
+    path('register/', RegisterView.as_view(), name='register'),
+    path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('profile/', UserProfileView.as_view(), name='user_profile'),
+] + router.urls + carts_router.urls

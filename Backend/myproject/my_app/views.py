@@ -50,10 +50,17 @@ class UserProfileView(generics.RetrieveAPIView):
     def get_object(self):
         return self.request.user
 
+
+# ....game.... 
+    
 class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
     permission_classes = [permissions.IsAuthenticated] 
+
+    def perform_create(self, serializer):
+        # Associate the review with the authenticated user
+        serializer.save(user=self.request.user)
     
 
 class GameReviewViewSet(viewsets.ModelViewSet):
@@ -61,10 +68,19 @@ class GameReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = [permissions.IsAuthenticated] 
 
+    def perform_create(self, serializer):
+        # Associate the review with the authenticated user
+        serializer.save(user=self.request.user)
+
 class GameImageViewSet(viewsets.ModelViewSet):
     serializer_class = ImageSerializer
     permission_classes = [permissions.IsAuthenticated] 
 
+    
+
+class GameImageViewSet(viewsets.ModelViewSet):
+    serializer_class = ImageSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         """
@@ -75,10 +91,15 @@ class GameImageViewSet(viewsets.ModelViewSet):
             return Image.objects.filter(game__id=game_id)
         return Image.objects.all()
 
+
 class CartViewSet(viewsets.ModelViewSet):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
     permission_classes = [permissions.IsAuthenticated] 
+
+    def perform_create(self, serializer):
+        # Associate the review with the authenticated user
+        serializer.save(user=self.request.user)
 
 
 class CartItemViewSet(viewsets.ModelViewSet):
@@ -107,6 +128,10 @@ class OrderViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'patch', 'delete']
     queryset = Order.objects.all()
     # serializer_class = OrderSerializer
+
+    def perform_create(self, serializer):
+        # Associate the review with the authenticated user
+        serializer.save(user=self.request.user)
 
     def get_serializer_class(self):
         if self.request.method == 'POST':

@@ -14,7 +14,7 @@ class Game(models.Model):
     developers = models.CharField(max_length=100)
     publisher = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='games', null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='games')
 
     def __str__(self):
         return f"{self.title}--|--{self.genres}"
@@ -28,11 +28,11 @@ class Image(models.Model):
 
 
 class Review(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='reviews', null=True)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='reviews')
     rating = models.PositiveIntegerField()
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews', null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
     
     def __str__(self):
         return f"{self.game.title} - {self.rating}"
@@ -41,7 +41,7 @@ class Review(models.Model):
 class Cart(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     created_at = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='carts', null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='carts')
 
     def __str__(self):
         return f"uuid- {self.id}"

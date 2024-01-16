@@ -56,7 +56,7 @@ class UserProfileView(generics.RetrieveAPIView):
 class GameViewSet(viewsets.ModelViewSet):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
-    permission_classes = [permissions.IsAuthenticated] 
+    # permission_classes = [permissions.IsAuthenticated] 
 
     def perform_create(self, serializer):
         # Associate the review with the authenticated user
@@ -80,7 +80,7 @@ class GameImageViewSet(viewsets.ModelViewSet):
 
 class GameImageViewSet(viewsets.ModelViewSet):
     serializer_class = ImageSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         """

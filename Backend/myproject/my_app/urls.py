@@ -35,4 +35,6 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('profile/', UserProfileView.as_view(), name='user_profile'),
+     path('games/<int:game_id>/reviews/', GameReviewViewSet.as_view({'get': 'list', 'post': 'create'}), name='game-reviews'),
+    path('images/<int:game_id>/', GameImageViewSet.as_view({'get': 'list'}), name='game-image-list'),
 ] + router.urls + carts_router.urls

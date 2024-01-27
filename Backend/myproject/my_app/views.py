@@ -49,7 +49,9 @@ class UserProfileView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
-
+    def get_serializer_context(self):
+        # Pass user ID to serializer context
+        return {'user_id': self.request.user.id}
 
 # ....game.... 
     
@@ -70,7 +72,15 @@ class GameReviewViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         # Associate the review with the authenticated user
+        print(f"Received data: {self.request.data}")
         serializer.save(user=self.request.user)
+
+class GameReviewViewSet(viewsets.ModelViewSet):
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        game_id = self.kwargs.get('game_id')
+        return Review.objects.filter(game_id=game_id)
 
 class GameImageViewSet(viewsets.ModelViewSet):
     serializer_class = ImageSerializer
@@ -80,7 +90,6 @@ class GameImageViewSet(viewsets.ModelViewSet):
 
 class GameImageViewSet(viewsets.ModelViewSet):
     serializer_class = ImageSerializer
-    # permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         """

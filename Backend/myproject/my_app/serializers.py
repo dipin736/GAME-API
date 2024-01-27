@@ -32,7 +32,11 @@ class UserviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name']
-
+        
+    def get_user_id(self, obj):
+        # Retrieve user ID from context
+        user_id = self.context.get('user_id')
+        return user_id
 
 class ImageSerializer(serializers.ModelSerializer):
     
@@ -81,14 +85,17 @@ class SimpleProductSerializer(serializers.ModelSerializer):
         fields = ['id','title','price']
 
 class ReviewSerializer(serializers.ModelSerializer):
-    # game=SimpleReviewSerializer()
     class Meta:
         model = Review
         fields = '__all__'
 
-    # def create(self, validated_data):
-    #     game_id = self.context['game_id']
-    #     return Review.objects.create(game_id=game_id, **validated_data)
+    def create(self, validated_data):
+        game_id = validated_data.pop('game_id', None)
+        if game_id is not None:
+            validated_data['game_id'] = game_id
+
+        return super().create(validated_data)
+
     
 class CartItemSerializer(serializers.ModelSerializer):
     game = SimpleProductSerializer()

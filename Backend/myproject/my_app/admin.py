@@ -38,3 +38,6 @@ admin.site.register(Game, GameAdmin)
 admin.site.register(Cart, CartAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Contact, ContactAdmin)
+admin.site.register(Review)
+admin.site.register(Image)
+

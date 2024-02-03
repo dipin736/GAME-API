@@ -15,6 +15,7 @@ class Game(models.Model):
     publisher = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='games')
+    youtube_video_url = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.title}--|--{self.genres}"
@@ -58,7 +59,7 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='cart_items')
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cart_items')
     def __str__(self):
         return f"{self.quantity} x {self.game.title}"
 
@@ -87,6 +88,7 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='order_items')
 
     def __str__(self):
         return f"{self.quantity} x {self.game.title} in Order {self.order.id}"
@@ -94,3 +96,14 @@ class OrderItem(models.Model):
     
     def get_total_price(self):
         return self.quantity * self.game.price
+    
+from django.db import models
+
+class Contact(models.Model):
+    name = models.CharField(max_length=50)
+    email = models.EmailField(max_length=50)
+    phone = models.CharField(max_length=15)  
+    message = models.TextField(max_length=250)
+
+    def __str__(self):
+        return f"{self.name} - {self.email}"

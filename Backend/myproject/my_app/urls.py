@@ -9,9 +9,9 @@ router.register(r'review', GameReviewViewSet, basename='review-list')
 router.register(r'image', GameImageViewSet, basename='image-list')
 router.register(r'carts', CartViewSet, basename='carts')
 router.register(r'orders', OrderViewSet, basename='orders')
-# router.register(r'orders', OrderViewSet, basename='order')
 router.register(r'order-items', OrderItemViewSet, basename='order-item')
 router.register(r'contacts', ContactViewSet, basename='contact')
+# router.register(r'orders', OrderViewSet, basename='order')
 
 
 carts_router = NestedDefaultRouter(router, 'carts', lookup='cart')

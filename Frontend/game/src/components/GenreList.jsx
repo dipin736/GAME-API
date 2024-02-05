@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, List, ListItem, HStack, Image, Button, Heading } from '@chakra-ui/react';
 import api from '../service/api';
 
-const GenreList = ({ genres, game }) => {
+const genreList = ({ genres, game }) => {
   const genresArray = Array.isArray(genres) ? genres : [genres];
   const [image, setImage] = useState(null);
 
@@ -49,4 +49,4 @@ const GenreList = ({ genres, game }) => {
   );
 };
 
-export default GenreList;
+export default genreList;

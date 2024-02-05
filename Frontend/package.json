@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "@types/react-icons": "^3.0.0",
-    "jsonwebtoken": "^9.0.2",
-    "jwt-decode": "^4.0.0",
-    "react-toastify": "^10.0.4",
-    "uuid": "^9.0.1"
-  }
-}

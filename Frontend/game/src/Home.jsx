@@ -13,12 +13,13 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { FaHome, FaInfoCircle, FaEnvelope } from "react-icons/fa";
-import GenreList from "./components/genreList";
+
 import GameGrid from "./components/GameGrid";
 import { Link } from "react-router-dom";
 import NewReleasesList from "./components/NewReleasesList";
 import TopReleases from "./components/TopReleases";
 import SortSelector from "./components/SortSelector";
+import GenresList from "./components/GenresList";
 
 const Home = ({ loading, filteredGames }) => {
   return loading ? (
@@ -72,7 +73,7 @@ const Home = ({ loading, filteredGames }) => {
             <Text>No matching games found</Text>
           ) : (
             filteredGames.map((game) => (
-              <GenreList key={game.id} genres={game.genres} game={game} />
+              <GenresList key={game.id} genres={game.genres} game={game} />
             ))
           )}
         </GridItem>

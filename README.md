@@ -36,7 +36,7 @@ Game Store is a full-stack web application built with Django and React.js, allow
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/dipin-736/game-store.git
+git clone [https://github.com/dipin-736/game-store.git]
 cd myproject
 
 Set up the backend:
